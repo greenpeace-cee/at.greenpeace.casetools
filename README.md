@@ -41,7 +41,7 @@ The `Case.create` API was changed to accept a `track_status_change` parameter.
 When this parameter is set to `TRUE`, and an API request is sent that changes
 the status of an existing case, a "Change Case Status" activity is created.
 
-The API also accepts the optional "status_change_activity" array parameter.
+The API also accepts the optional `status_change_activity` array parameter.
 When is parameter is set, it's passed to the `Activity.create` call used to
 create the "Change Case Status" activity, allowing API clients to change
 the activity as needed (for example by adding a `medium_id` parameter). 
