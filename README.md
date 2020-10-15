@@ -44,7 +44,10 @@ the status of an existing case, a "Change Case Status" activity is created.
 The API also accepts the optional `status_change_activity` array parameter.
 When is parameter is set, it's passed to the `Activity.create` call used to
 create the "Change Case Status" activity, allowing API clients to change
-the activity as needed (for example by adding a `medium_id` parameter). 
+the activity as needed (for example by adding a `medium_id` parameter).
 
+### File Activity on Case
+
+The `Activity.fileoncase` API allows filing activities on cases.
 
 ## Known Issues
