@@ -102,7 +102,11 @@ class CRM_Casetools_Utils_CaseManager {
   }
 
   /**
+   * Sets managers to case
+   *
    * @param $newManagerIds
+   *
+   * @return array
    */
   public function setManagerIds($newManagerIds) {
     $this->validateNewManagerIds($newManagerIds);
@@ -117,6 +121,13 @@ class CRM_Casetools_Utils_CaseManager {
     foreach ($neededToUnsetManagerIds as $managerContactId) {
       $this->unsetManager($managerContactId, $this->clientId);
     }
+
+    return [
+      'managers_before_update' => $currentManagerIds,
+      'managers_after_update' => $newManagerIds,
+      'added_manager_ids' => $neededToSetManagerIds,
+      'removed_manager_ids' => $neededToUnsetManagerIds,
+    ];
   }
 
   /**
