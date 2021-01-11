@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class CRM_Casetools_APIWrappers_ChangeCaseManagers
+ * Class CRM_Casetools_APIWrappers_HandleCaseManagers
  *
  * Changes case managers if exists 'new_case_manager_ids' param
  * Creates a case status change activity when the Case.create API is used with
@@ -10,7 +10,7 @@
  * Activity params may be changed via the "managers_change_activity_params" parameter,
  * which is passed to Activity.create.
  */
-class CRM_Casetools_APIWrappers_ChangeCaseManagers implements API_Wrapper {
+class CRM_Casetools_APIWrappers_HandleCaseManagers implements API_Wrapper {
 
   /**
    * @param array $apiRequest
