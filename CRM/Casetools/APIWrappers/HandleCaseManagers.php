@@ -4,7 +4,7 @@
  * Class CRM_Casetools_APIWrappers_HandleCaseManagers
  *
  * Changes case managers if exists 'new_case_manager_ids' param
- * Creates a case status change activity when the Case.create API is used with
+ * Creates a 'case managers change activity' when the Case.create API is used with
  * the "track_managers_change" parameter set to TRUE.
  *
  * Activity params may be changed via the "managers_change_activity_params" parameter,
@@ -87,7 +87,11 @@ class CRM_Casetools_APIWrappers_HandleCaseManagers implements API_Wrapper {
       $managersNamesAfterUpdate[] = CRM_Contact_BAO_Contact::displayName($contactId);
     }
 
-    $subject = ts('Case id %3. Managers is changed from: "%1" to "%2".', [
+    $subject = ts('Case id %3. Managers are changed.', [
+      1 => $caseId,
+    ]);
+
+    $details = ts('Managers are changed from: "%1" to "%2".', [
       1 => implode(', ', $managersNamesBeforeUpdate),
       2 => implode(', ', $managersNamesAfterUpdate),
       3 => $caseId,
@@ -97,6 +101,7 @@ class CRM_Casetools_APIWrappers_HandleCaseManagers implements API_Wrapper {
       'case_id' => $caseId,
       'activity_type_id' => CRM_Casetools_Install_Entity_OptionValue::CHANGE_CASE_MANAGERS,
       'subject' => $subject,
+      'details' => $details,
     ];
 
     try {
