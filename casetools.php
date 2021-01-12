@@ -140,5 +140,6 @@ function casetools_civicrm_apiWrappers(&$wrappers, $apiRequest) {
   if ($apiRequest['entity'] == 'Case' && $apiRequest['action'] == 'create') {
     $wrappers[] = new CRM_Casetools_APIWrappers_CaseStatus();
     $wrappers[] = new CRM_Casetools_APIWrappers_HandleCaseManagers();
+    $wrappers[] = new CRM_Casetools_APIWrappers_HandleCaseTags();
   }
 }
