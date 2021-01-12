@@ -97,7 +97,7 @@ class CRM_Casetools_APIWrappers_HandleCaseManagers implements API_Wrapper {
 
     $params = [
       'case_id' => $caseId,
-      'activity_type_id' => CRM_Casetools_Install_Entity_OptionValue::CHANGE_CASE_MANAGERS,
+      'activity_type_id' => 'Reassigned Case',
       'subject' => $subject,
       'details' => $details,
     ];

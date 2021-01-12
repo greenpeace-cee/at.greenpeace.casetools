@@ -95,7 +95,7 @@ class CRM_Casetools_APIWrappers_HandleCaseTags implements API_Wrapper {
 
     $params = [
       'case_id' => $caseId,
-      'activity_type_id' => CRM_Casetools_Install_Entity_OptionValue::CHANGE_CASE_TAGS,
+      'activity_type_id' => 'Change Case Tags',
       'subject' => $subject,
       'details' => $details,
     ];
