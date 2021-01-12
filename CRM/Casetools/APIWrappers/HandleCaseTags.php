@@ -37,6 +37,10 @@ class CRM_Casetools_APIWrappers_HandleCaseTags implements API_Wrapper {
     $tagEntityTable = 'civicrm_case';
 
     $tagsBeforeUpdate = CRM_Casetools_Utils_Tag::getTags($caseId, $tagEntityTable);
+    if (CRM_Casetools_Utils_Tag::getTagsIds($caseId, $tagEntityTable) == $apiRequest['params']['tags_ids']) {
+      return $result;
+    }
+
     CRM_Casetools_Utils_Tag::setTagIdsToEntity($caseId, $apiRequest['params']['tags_ids'], $tagEntityTable);
     $tagsAfterUpdate = CRM_Casetools_Utils_Tag::getTags($caseId, $tagEntityTable);
 
@@ -83,14 +87,10 @@ class CRM_Casetools_APIWrappers_HandleCaseTags implements API_Wrapper {
       $tagsNamesAfterUpdate[] = $tag['name'];
     }
 
-    $subject = ts('Case id %1. Tags are changed.', [
-      1 => $caseId,
-    ]);
-    
+    $subject = ts('Case id %1. Tags are changed.', [1 => $caseId]);
     $details = ts('Tags are changed from: "%1" to "%2".', [
       1 => implode(', ', $tagsNamesBeforeUpdate),
       2 => implode(', ', $tagsNamesAfterUpdate),
-      3 => $caseId,
     ]);
 
     $params = [

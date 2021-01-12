@@ -35,22 +35,24 @@ class CRM_Casetools_APIWrappers_HandleCaseManagers implements API_Wrapper {
 
     $values = reset($result['values']);
     $caseManager = new CRM_Casetools_Utils_CaseManager($apiRequest['params']['id']);
+    if ($caseManager->getCaseManagerContactIds() == $apiRequest['params']['new_case_manager_ids']) {
+      return $result;
+    }
+    
     $managersChangeReport = $caseManager->setManagerIds($apiRequest['params']['new_case_manager_ids']);
 
     if (!empty($apiRequest['params']['track_managers_change']))  {
-      if (!empty($managersChangeReport['added_manager_ids'] || !empty($managersChangeReport['removed_manager_ids']))) {
-        $activityParams = [];
-        if (!empty($apiRequest['params']['managers_change_activity_params']) && is_array($apiRequest['params']['managers_change_activity_params'])) {
-          $activityParams = $apiRequest['params']['managers_change_activity_params'];
-        }
-
-        $this->createManagerChangeActivity(
-          $values['id'],
-          $managersChangeReport['managers_before_update'],
-          $managersChangeReport['managers_after_update'],
-          $activityParams
-        );
+      $activityParams = [];
+      if (!empty($apiRequest['params']['managers_change_activity_params']) && is_array($apiRequest['params']['managers_change_activity_params'])) {
+        $activityParams = $apiRequest['params']['managers_change_activity_params'];
       }
+
+      $this->createManagerChangeActivity(
+        $values['id'],
+        $managersChangeReport['managers_before_update'],
+        $managersChangeReport['managers_after_update'],
+        $activityParams
+      );
     }
 
     return $result;
@@ -87,14 +89,10 @@ class CRM_Casetools_APIWrappers_HandleCaseManagers implements API_Wrapper {
       $managersNamesAfterUpdate[] = CRM_Contact_BAO_Contact::displayName($contactId);
     }
 
-    $subject = ts('Case id %3. Managers are changed.', [
-      1 => $caseId,
-    ]);
-
+    $subject = ts('Case id %1. Managers are changed.', [1 => $caseId,]);
     $details = ts('Managers are changed from: "%1" to "%2".', [
       1 => implode(', ', $managersNamesBeforeUpdate),
       2 => implode(', ', $managersNamesAfterUpdate),
-      3 => $caseId,
     ]);
 
     $params = [
