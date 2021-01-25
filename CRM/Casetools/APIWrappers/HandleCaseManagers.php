@@ -3,7 +3,9 @@
 /**
  * Class CRM_Casetools_APIWrappers_HandleCaseManagers
  *
- * Changes case managers if exists 'new_case_manager_ids' param
+ * Changes case managers if exists 'new_case_manager_ids' param.
+ * All case managers not in 'new_case_manager_ids' param will be removed.
+ * 
  * Creates a 'case managers change activity' when the Case.create API is used with
  * the "track_managers_change" parameter set to TRUE.
  *

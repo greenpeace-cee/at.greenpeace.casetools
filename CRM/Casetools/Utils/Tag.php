@@ -86,7 +86,7 @@ class CRM_Casetools_Utils_Tag {
    * @return bool
    */
   public static function isTagExist($entityTagId, $entityTableName) {
-    if (empty($entityTagId)) {
+    if (empty($entityTagId) || empty($entityTableName)) {
       return false;
     }
 
@@ -131,7 +131,7 @@ class CRM_Casetools_Utils_Tag {
    * @param $entityTableName
    */
   public static function deleteAllTagsRelatedToEntity($entityId, $entityTableName) {
-    if (empty($entityId)) {
+    if (empty($entityId) || empty($entityTableName)) {
       return;
     }
 
@@ -149,13 +149,18 @@ class CRM_Casetools_Utils_Tag {
    * @param $entityId
    * @param $newTagsIds
    * @param $entityTableName
+   * @param bool $isOnlyAddTags
    */
-  public static function setTagIdsToEntity($entityId, $newTagsIds, $entityTableName) {
-    self::deleteAllTagsRelatedToEntity($entityId, $entityTableName);
+  public static function setTagIdsToEntity($entityId, $newTagsIds, $entityTableName, $isOnlyAddTags = false) {
+    if (!$isOnlyAddTags) {
+      self::deleteAllTagsRelatedToEntity($entityId, $entityTableName);
+    }
 
+    $currentTagsIds = self::getTagsIds($entityId, $entityTableName);
     $entityIds = [$entityId];
+
     foreach ($newTagsIds as $tagId) {
-      if (self::isTagExist($tagId, $entityTableName)) {
+      if (self::isTagExist($tagId, $entityTableName) && !in_array($entityIds, $currentTagsIds)) {
         CRM_Core_BAO_EntityTag::addEntitiesToTag($entityIds, $tagId, $entityTableName, FALSE);
       }
     }

@@ -3,7 +3,12 @@
 /**
  * Class CRM_Casetools_APIWrappers_HandleCaseTags
  *
- * Changes case tags if exists 'tags_ids' param
+ * Changes case tags if exists 'tags_ids' param.
+ * All tags not in 'tags_ids' param will be removed.
+ *
+ * If 'is_only_add_tags' is checked,
+ * it will only add tags from 'tags_ids' param and don't remove tags not in 'tags_ids' param.
+ *
  * Creates a 'case tag change activity' when the Case.create API is used with
  * the "track_tags_change" parameter set to TRUE.
  *
@@ -35,13 +40,18 @@ class CRM_Casetools_APIWrappers_HandleCaseTags implements API_Wrapper {
 
     $caseId = $apiRequest['params']['id'];
     $tagEntityTable = 'civicrm_case';
+    $isOnlyAddTags = false;
 
     $tagsBeforeUpdate = CRM_Casetools_Utils_Tag::getTags($caseId, $tagEntityTable);
     if (CRM_Casetools_Utils_Tag::getTagsIds($caseId, $tagEntityTable) == $apiRequest['params']['tags_ids']) {
       return $result;
     }
 
-    CRM_Casetools_Utils_Tag::setTagIdsToEntity($caseId, $apiRequest['params']['tags_ids'], $tagEntityTable);
+    if (isset($apiRequest['params']['is_only_add_tags'])) {
+      $isOnlyAddTags = (bool) $apiRequest['params']['is_only_add_tags'];
+    }
+
+    CRM_Casetools_Utils_Tag::setTagIdsToEntity($caseId, $apiRequest['params']['tags_ids'], $tagEntityTable, $isOnlyAddTags);
     $tagsAfterUpdate = CRM_Casetools_Utils_Tag::getTags($caseId, $tagEntityTable);
 
     if (!empty($apiRequest['params']['track_tags_change']))  {
