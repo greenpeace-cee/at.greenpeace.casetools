@@ -20,7 +20,7 @@
   <compatibility>
     <ver>5.37</ver>
   </compatibility>
-  <comments></comments>
+  <comments/>
   <civix>
     <namespace>CRM/Casetools</namespace>
   </civix>
