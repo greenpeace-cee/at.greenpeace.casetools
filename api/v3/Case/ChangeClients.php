@@ -85,7 +85,10 @@ function change_clients_single_row($case_id, $client_id) : array
   $return_values['activity_id'] = change_clients_get_case_activities($case_id);
   try {
     foreach ($return_values['activity_id'] as $activity_id) {
-      $return_values['activity_contact'][] = change_clients_update_activity_contact($activity_id, $current_client_id, $client_id);
+      $return_values['activity_contact'] = array_merge(
+        $return_values['activity_contact'],
+        change_clients_update_activity_contacts($activity_id, $current_client_id, $client_id)
+      );
     }
   } catch (CiviCRM_API3_Exception $e) {
     throw new API_Exception('ActivityContact update failed: ', $e->getMessage());
@@ -121,20 +124,25 @@ function change_clients_get_case_activities($case_id): array
  * @param $activity_id
  * @param $current_client_id
  * @param $new_client_id
- * @return bool
+ * @return array
  * @throws CiviCRM_API3_Exception
  */
-function change_clients_update_activity_contact($activity_id, $current_client_id, $new_client_id): int
+function change_clients_update_activity_contacts($activity_id, $current_client_id, $new_client_id): array
 {
   $activity_contact = civicrm_api3('ActivityContact', 'get', [
     'activity_id' => $activity_id,
     'contact_id' => $current_client_id
   ]);
-  $activity_contact_id = (int) reset($activity_contact['values'])['id'];
-  civicrm_api3('ActivityContact', 'create', [
-    'id' => $activity_contact_id,
-    'activity_id' => $activity_id,
-    'contact_id' => $new_client_id,
-  ]);
-  return $activity_contact_id;
+
+  $activity_contact_ids = [];
+
+  foreach($activity_contact['values'] as $activity_contact) {
+    $activity_contact_ids[] = civicrm_api3('ActivityContact', 'create', [
+      'id' => $activity_contact['id'],
+      'activity_id' => $activity_id,
+      'contact_id' => $new_client_id,
+    ])['id'];
+  }
+
+  return $activity_contact_ids;
 }
