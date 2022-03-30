@@ -69,7 +69,8 @@ function change_clients_single_row($case_id, $client_id) : array
 {
   $return_values = [
     'activity_id' => [],
-    'activity_contact' => []
+    'activity_contact' => [],
+    'relationship' => [],
   ];
   try {
     $case_contact = civicrm_api3('CaseContact', 'get', [ 'case_id' => $case_id ]);
@@ -93,6 +94,7 @@ function change_clients_single_row($case_id, $client_id) : array
   } catch (CiviCRM_API3_Exception $e) {
     throw new API_Exception('ActivityContact update failed: ', $e->getMessage());
   }
+  $return_values['relationship'] = change_case_relationships($case_id, $current_client_id, $client_id);
   return $return_values;
 }
 
@@ -145,4 +147,26 @@ function change_clients_update_activity_contacts($activity_id, $current_client_i
   }
 
   return $activity_contact_ids;
+}
+
+/**
+ * Move case coordinator relationship to new client
+ *
+ * @param $case_id
+ * @param $current_client_id
+ * @param $new_client_id
+ *
+ * @return array
+ * @throws \API_Exception
+ * @throws \Civi\API\Exception\UnauthorizedException
+ */
+function change_case_relationships($case_id, $current_client_id, $new_client_id): array {
+  $result = \Civi\Api4\Relationship::update(FALSE)
+    ->addWhere('case_id', '=', $case_id)
+    ->addWhere('contact_id_a', '=', $current_client_id)
+    ->addWhere('relationship_type_id:name', '=', 'Case Coordinator is')
+    ->addValue('contact_id_a', $new_client_id)
+    ->execute()
+    ->getArrayCopy();
+  return array_column($result, 'id');
 }
