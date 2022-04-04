@@ -94,7 +94,7 @@ function change_clients_single_row($case_id, $client_id) : array
   } catch (CiviCRM_API3_Exception $e) {
     throw new API_Exception('ActivityContact update failed: ', $e->getMessage());
   }
-  $return_values['relationship'] = change_case_relationships($case_id, $current_client_id, $client_id);
+  $return_values['relationship'] = change_clients_change_case_relationships($case_id, $current_client_id, $client_id);
   return $return_values;
 }
 
@@ -160,7 +160,7 @@ function change_clients_update_activity_contacts($activity_id, $current_client_i
  * @throws \API_Exception
  * @throws \Civi\API\Exception\UnauthorizedException
  */
-function change_case_relationships($case_id, $current_client_id, $new_client_id): array {
+function change_clients_change_case_relationships($case_id, $current_client_id, $new_client_id): array {
   $result = \Civi\Api4\Relationship::update(FALSE)
     ->addWhere('case_id', '=', $case_id)
     ->addWhere('contact_id_a', '=', $current_client_id)
