@@ -1,4 +1,7 @@
 <?php
+
+use Civi\Api4\Activity;
+use Civi\Api4\CaseActivity;
 use CRM_Casetools_ExtensionUtil as E;
 
 /**
@@ -95,6 +98,7 @@ function change_clients_single_row($case_id, $client_id) : array
     throw new API_Exception('ActivityContact update failed: ', $e->getMessage());
   }
   $return_values['relationship'] = change_clients_change_case_relationships($case_id, $current_client_id, $client_id);
+  $return_values['reassigned_case_activity'] = change_clients_add_reassigned_activity($case_id, $current_client_id, $client_id);
   return $return_values;
 }
 
@@ -169,4 +173,26 @@ function change_clients_change_case_relationships($case_id, $current_client_id, 
     ->execute()
     ->getArrayCopy();
   return array_column($result, 'id');
+}
+
+function change_clients_add_reassigned_activity($case_id, $current_client_id, $new_client_id): array {
+  return Activity::create(FALSE)
+    ->addValue('activity_type_id:name', 'Reassigned Case')
+    ->addValue('source_contact_id', CRM_Core_Session::singleton()->getLoggedInContactID())
+    ->addValue('subject', ts(
+      'Case %1 reassigned client from contact id %2 to contact id %3.',
+      [
+        1 => $case_id,
+        2 => $current_client_id,
+        3 => $new_client_id,
+      ]
+    ))
+    ->addValue('activity_date_time', 'now')
+    ->addValue('status_id:name', 'Completed')
+    ->addChain('case_activity', CaseActivity::create()
+      ->addValue('activity_id', '$id')
+      ->addValue('case_id', $case_id)
+    )
+    ->execute()
+    ->first();
 }
