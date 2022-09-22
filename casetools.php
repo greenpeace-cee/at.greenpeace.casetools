@@ -143,3 +143,24 @@ function casetools_civicrm_apiWrappers(&$wrappers, $apiRequest) {
     $wrappers[] = new CRM_Casetools_APIWrappers_HandleCaseTags();
   }
 }
+
+/**
+ * Implements hook_civicrm_post().
+ */
+function casetools_civicrm_pre($operation, $objectName, $id, &$params) {
+  if ($objectName == 'Case' && $operation == 'edit' && !empty($params['status_id'])) {
+    try {
+      $currentStatusId = civicrm_api3('Case', 'getvalue', ['return' => "status_id", 'id' => $id]);
+    } catch (CiviCRM_API3_Exception $e) {
+      $currentStatusId = null;
+    }
+
+    $newStatusId = $params['status_id'];
+    $openedStatusesValues = CRM_Casetools_Utils_Case::getOpenedStatusesValues();
+    $closedStatusesValues = CRM_Casetools_Utils_Case::getClosedStatusesValues();
+
+    if (in_array($currentStatusId, $closedStatusesValues) && in_array($newStatusId, $openedStatusesValues)) {
+      $params['end_date'] = '';
+    }
+  }
+}
