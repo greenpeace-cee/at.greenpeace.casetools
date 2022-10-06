@@ -19,6 +19,7 @@ class CRM_Casetools_Utils_Case {
       $result = civicrm_api3('OptionValue', 'get', [
         'sequential' => 1,
         'option_group_id' => "case_status",
+        'options' => ['limit' => 0],
       ]);
     } catch (CiviCRM_API3_Exception $e) {
       return [];
