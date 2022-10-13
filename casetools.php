@@ -145,26 +145,8 @@ function casetools_civicrm_apiWrappers(&$wrappers, $apiRequest) {
 }
 
 /**
- * Implements hook_civicrm_post().
+ * Implements hook_civicrm_pre().
  */
 function casetools_civicrm_pre($operation, $objectName, $id, &$params) {
-  if ($objectName == 'Case' && $operation == 'edit' && !empty($params['status_id'])) {
-    try {
-      $currentStatusId = (string) civicrm_api3('Case', 'getvalue', ['return' => "status_id", 'id' => $id]);
-    } catch (CiviCRM_API3_Exception $e) {
-      $currentStatusId = null;
-    }
-
-    $newStatusId = (string) $params['status_id'];
-    if (!empty($newStatusId)) {
-      $openedStatusesValues = CRM_Casetools_Utils_Case::getOpenedStatusesValues();
-      $closedStatusesValues = CRM_Casetools_Utils_Case::getClosedStatusesValues();
-
-      if (in_array($currentStatusId, $closedStatusesValues) && in_array($newStatusId, $openedStatusesValues)) {
-        $params['end_date'] = '';
-      } else if (in_array($currentStatusId, $openedStatusesValues) && in_array($newStatusId, $closedStatusesValues)) {
-        $params['end_date'] = (new DateTime())->format('Ymd');
-      }
-    }
-  }
+  CRM_Casetools_Hooks_CaseEndDate::handlePreHook($operation, $objectName, $id, $params);
 }
