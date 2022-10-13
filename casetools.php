@@ -156,11 +156,15 @@ function casetools_civicrm_pre($operation, $objectName, $id, &$params) {
     }
 
     $newStatusId = (string) $params['status_id'];
-    $openedStatusesValues = CRM_Casetools_Utils_Case::getOpenedStatusesValues();
-    $closedStatusesValues = CRM_Casetools_Utils_Case::getClosedStatusesValues();
+    if (!empty($newStatusId)) {
+      $openedStatusesValues = CRM_Casetools_Utils_Case::getOpenedStatusesValues();
+      $closedStatusesValues = CRM_Casetools_Utils_Case::getClosedStatusesValues();
 
-    if (in_array($currentStatusId, $closedStatusesValues) && in_array($newStatusId, $openedStatusesValues)) {
-      $params['end_date'] = '';
+      if (in_array($currentStatusId, $closedStatusesValues) && in_array($newStatusId, $openedStatusesValues)) {
+        $params['end_date'] = '';
+      } else if (in_array($currentStatusId, $openedStatusesValues) && in_array($newStatusId, $closedStatusesValues)) {
+        $params['end_date'] = (new DateTime())->format('Ymd');
+      }
     }
   }
 }
