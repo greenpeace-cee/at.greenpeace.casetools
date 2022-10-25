@@ -143,3 +143,10 @@ function casetools_civicrm_apiWrappers(&$wrappers, $apiRequest) {
     $wrappers[] = new CRM_Casetools_APIWrappers_HandleCaseTags();
   }
 }
+
+/**
+ * Implements hook_civicrm_pre().
+ */
+function casetools_civicrm_pre($operation, $objectName, $id, &$params) {
+  CRM_Casetools_Hooks_CaseEndDate::handlePreHook($operation, $objectName, $id, $params);
+}
