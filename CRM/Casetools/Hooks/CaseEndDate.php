@@ -24,6 +24,7 @@ class CRM_Casetools_Hooks_CaseEndDate {
       return;
     }
 
+    $newStatusId = (string) $params['status_id'];
     if (empty($newStatusId)) {
       return;
     }
@@ -38,7 +39,6 @@ class CRM_Casetools_Hooks_CaseEndDate {
       $currentStatusId = null;
     }
 
-    $newStatusId = (string) $params['status_id'];
     $openedStatusesValues = CRM_Casetools_Utils_Case::getOpenedStatusesValues();
     $closedStatusesValues = CRM_Casetools_Utils_Case::getClosedStatusesValues();
 
