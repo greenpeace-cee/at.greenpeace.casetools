@@ -42,14 +42,16 @@ function _civicrm_api3_case_change_clients_spec(&$spec) {
  */
 function civicrm_api3_case_change_clients($params)
 {
-  if (count($params['client_id']) > 1) {
-    throw new \Civi\API\Exception\NotImplementedException("No multi-client cases implemented.");
+  if (is_array($params['client_id'])) {
+    throw new api_Exception('No multi-client cases implemented.', 'no_multi_client');
   }
+
   $return_values = [
     'id' => $params['id'],
     'client_id' => $params['client_id'],
     'rows' => []
   ];
+
   if (is_array($params['client_id'])) {
     foreach ($params['client_id'] as $client_id) {
       $return_values['rows'][] = change_clients_single_row($params['id'], (int) $client_id);
@@ -57,6 +59,7 @@ function civicrm_api3_case_change_clients($params)
   } else {
     $return_values['rows'][] = change_clients_single_row($params['id'], (int) $params['client_id']);
   }
+
   return civicrm_api3_create_success($return_values, $params, 'Case', 'change_clients');
 }
 
