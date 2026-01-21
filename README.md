@@ -40,11 +40,11 @@ cv en casetools
 ##### Params related to case managers:
 - `new_case_manager_ids`(array) - updates case managers. All case managers not in this param will be removed.
 - `track_managers_change`(bool) - if it checked, it creates new activity(type=`Reassigned Case`) where in details you can see which case managers was before and after.
-- `managers_change_activity_params`(array) - allows to add extra params to activity which will created when `track_managers_change` param is checked. List of available params you can see in `Case.create` API. 
+- `managers_change_activity_params`(array) - allows to add extra params to activity which will created when `track_managers_change` param is checked. List of available params you can see in `Case.create` API.
 ---
 ##### Params related to case status:
 - `track_status_change`(bool) - if it checked, it creates new activity(type=`Change Case Status`) where in subject you can see which status was before and after.
-- `managers_change_activity_params`(array) - allows to add extra params to activity which will created when `track_status_change` param is checked. List of available params you can see in `Case.create` API.
+- `status_change_activity`(array) - allows to add extra params to activity which will created when `track_status_change` param is checked. List of available params you can see in `Case.create` API.
 ---
 ##### Params related to case tags:
 - `tags_ids`(array) - updates case tags. All case tags not in this param will be removed.
@@ -59,7 +59,7 @@ cv en casetools
 This API returns list of case manager ids.
 
 Available params:
-- `case_id`(int)(required) - Case id. 
+- `case_id`(int)(required) - Case id.
 
 Results example:
 ```php
@@ -73,7 +73,7 @@ Results example:
 This API returns case manager settings.
 
 Available params:
-- `case_id`(int)(required) - Case id. 
+- `case_id`(int)(required) - Case id.
 
 Results example:
 ```php
